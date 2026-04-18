@@ -254,16 +254,13 @@ const SlidesModule = () => {
   const slideRef = useRef(null);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement || !!document.webkitFullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-    };
-  }, []);
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [isFullscreen]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -338,23 +335,11 @@ const SlidesModule = () => {
   };
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      if (slideRef.current?.requestFullscreen) {
-        slideRef.current.requestFullscreen();
-      } else if (slideRef.current?.webkitRequestFullscreen) {
-        slideRef.current.webkitRequestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-    }
+    setIsFullscreen(!isFullscreen);
   };
 
   const handleSlideClick = (e) => {
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) return;
+    if (!isFullscreen) return;
     const rect = slideRef.current.getBoundingClientRect();
     const isLeft = e.clientX < rect.left + rect.width / 3;
     if (isLeft) {
@@ -363,11 +348,7 @@ const SlidesModule = () => {
       if (currentSlide < slides.length - 1) {
         setCurrentSlide(currentSlide + 1);
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
+        setIsFullscreen(false);
       }
     }
   };
@@ -500,9 +481,23 @@ const SlidesModule = () => {
             </button>
           </div>
 
-          {/* Canvas */}
+          {/* Canvas Center */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', minHeight: 0 }}>
-            <div onClick={handleSlideClick} id="slide-capture-node" ref={slideRef} style={{ flex: 1, borderRadius: '22px', position: 'relative', overflow: 'hidden', boxShadow: `0 25px 70px -10px rgba(0,0,0,0.6), 0 0 0 1px ${activeTheme.accent}20`, minHeight: 0, cursor: 'pointer' }}>
+            <div onClick={handleSlideClick} id="slide-capture-node" ref={slideRef} style={{ 
+              flex: 1, 
+              borderRadius: isFullscreen ? '0px' : '22px', 
+              position: isFullscreen ? 'fixed' : 'relative', 
+              inset: isFullscreen ? 0 : 'auto',
+              zIndex: isFullscreen ? 9999 : 1,
+              width: isFullscreen ? '100vw' : '100%',
+              height: isFullscreen ? '100vh' : 'auto',
+              overflow: 'hidden', 
+              boxShadow: isFullscreen ? 'none' : `0 25px 70px -10px rgba(0,0,0,0.6), 0 0 0 1px ${activeTheme.accent}20`, 
+              minHeight: isFullscreen ? '100vh' : '0', 
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
 
               {/* ── ANIMATED BACKGROUND ── */}
               <AnimatePresence mode="wait">
@@ -540,13 +535,9 @@ const SlidesModule = () => {
               {/* Sair Fullscreen Button */}
               {isFullscreen && (
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Evitar passar slide
-                    if (document.exitFullscreen) document.exitFullscreen();
-                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                  }}
+                  onClick={toggleFullscreen}
                   style={{
-                    position: 'absolute', top: '18px', left: '20px', zIndex: 20,
+                    position: 'absolute', top: '18px', left: '20px', zIndex: 10000,
                     background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: '100px', border: '1px solid rgba(255,255,255,0.2)',
                     color: 'white', fontWeight: '700', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', backdropFilter: 'blur(10px)'
                   }}
