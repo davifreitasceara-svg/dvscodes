@@ -15,7 +15,7 @@ import {
   Eraser, ArrowUpCircle, Sparkles,
   Film, MessageSquare, PenTool,
   Plus, ChevronRight, Settings, Calendar, Disc, Play,
-  MapPin, ArrowRight, Heart, Bell
+  MapPin, ArrowRight, Heart, Bell, Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -62,6 +62,16 @@ const CREATOR_TOOLS = [
   { Icon: TrendingUp,    label: 'Tendências',        id: 'trends', badge: null },
 ];
 
+const deleteProject = (id) => {
+  const projects = JSON.parse(localStorage.getItem('dvs-creator-projects') || '[]');
+  const filtered = projects.filter(p => p.id !== id);
+  localStorage.setItem('dvs-creator-projects', JSON.stringify(filtered));
+  window.dispatchEvent(new Event('storage'));
+};
+  { Icon: ArrowUpCircle, label: 'Melhorar HD',       id: 'viral', badge: 'FREE' },
+  { Icon: TrendingUp,    label: 'Tendências',        id: 'trends', badge: null },
+];
+
 // ─── Creator Dashboard ───
 const CreatorDashboard = ({ onNavigate }) => {
   const projects = loadProjects();
@@ -69,102 +79,179 @@ const CreatorDashboard = ({ onNavigate }) => {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      style={{ display: 'flex', flexDirection: 'column', background: '#fff', minHeight: '100vh' }}
+      className="creator-vibrant-ambient"
+      style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'relative' }}
     >
-      {/* Search Bar */}
-      <div className="creator-search-container">
-        <div className="creator-search-box">
-          <Search size={20} color="#000" />
-          <input type="text" placeholder="Places to go, things to do, hotels..." />
-        </div>
-      </div>
+      {/* Background Ambient Blobs */}
+      <motion.div 
+        animate={{ 
+          x: [0, 100, 0], y: [0, 50, 0],
+          scale: [1, 1.2, 1]
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+        className="creator-ambient-blob" 
+        style={{ top: '-100px', right: '-100px', background: 'radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%)' }} 
+      />
+      <motion.div 
+        animate={{ 
+          x: [0, -80, 0], y: [0, 100, 0],
+          scale: [1, 1.1, 1]
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+        className="creator-ambient-blob" 
+        style={{ bottom: '10%', left: '-100px', background: 'radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%)' }} 
+      />
 
-      {/* Promo Banner */}
-      <div className="creator-promo-banner">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div className="creator-promo-icon">
-            <MapPin size={24} color="#059669" />
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        {/* Promo Banner */}
+        <motion.div 
+          whileHover={{ scale: 0.98 }}
+          onClick={() => onNavigate('viral')}
+          className="creator-promo-banner glass-panel-creator" 
+          style={{ background: 'linear-gradient(135deg, rgba(219, 252, 230, 0.6) 0%, rgba(255, 255, 255, 0.4) 100%)', marginTop: '12px' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="creator-promo-icon" style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)' }}>
+              <Sparkles size={24} color="#fff" />
+            </div>
+            <div>
+              <p style={{ fontSize: '1rem', fontWeight: '800', color: '#065f46' }}>Upgrade para o PRO ✨</p>
+              <p style={{ fontSize: '0.85rem', color: '#065f46', opacity: 0.8 }}>Acesso ilimitado a todas as IAs</p>
+            </div>
           </div>
-          <div>
-            <p style={{ fontSize: '1rem', fontWeight: '700', color: '#000' }}>Looking for something nearby?</p>
-            <p style={{ fontSize: '0.9rem', color: '#666' }}>Allow location access</p>
-          </div>
-        </div>
-        <ArrowRight size={20} color="#000" />
-      </div>
+          <ArrowRight size={20} color="#065f46" />
+        </motion.div>
 
-      {/* Hero Section */}
-      <h2 className="creator-section-title">Plan your next adventure</h2>
-      
-      <div className="creator-hero-scroll">
-        <div className="creator-card-large" onClick={() => onNavigate('viral')}>
-          <img src="/src/assets/creator-viral.png" alt="Viral Studio" />
-          <div className="creator-card-overlay">
-            <p className="creator-card-title">Crie Vídeos Virais</p>
-            <p className="creator-card-subtitle">Studio de Cinema IA</p>
-          </div>
+        {/* Hero Section */}
+        <h2 className="creator-section-title vibrant-gradient-text">Minha Jornada Criativa</h2>
+        
+        <div className="creator-hero-scroll">
+          <motion.div 
+            whileHover={{ y: -5 }} 
+            className="creator-card-large glass-panel-creator" 
+            onClick={() => onNavigate('viral')}
+            style={{ 
+              background: 'linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '24px',
+              textAlign: 'center'
+            }}
+          >
+             <div style={{ fontSize: '3rem', fontWeight: '900', color: 'rgba(255,255,255,0.2)', position: 'absolute', top: 10, left: 20 }}>VS</div>
+             <Video size={48} color="#fff" style={{ marginBottom: '16px' }} />
+             <p style={{ fontSize: '1.6rem', fontWeight: '900', color: '#fff', margin: 0, lineHeight: 1.1 }}>VIRAL<br/>STUDIO</p>
+             <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginTop: '8px', fontWeight: '700' }}>Criação de Cinema</p>
+          </motion.div>
+
+          <motion.div 
+            whileHover={{ y: -5 }} 
+            className="creator-card-large glass-panel-creator" 
+            onClick={() => onNavigate('templates')}
+            style={{ 
+              background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '24px',
+              textAlign: 'center'
+            }}
+          >
+             <div style={{ fontSize: '3rem', fontWeight: '900', color: 'rgba(255,255,255,0.2)', position: 'absolute', top: 10, left: 20 }}>TP</div>
+             <Layout size={48} color="#fff" style={{ marginBottom: '16px' }} />
+             <p style={{ fontSize: '1.6rem', fontWeight: '900', color: '#fff', margin: 0, lineHeight: 1.1 }}>PRO<br/>TEMPLATES</p>
+             <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginTop: '8px', fontWeight: '700' }}>Design Pronto</p>
+          </motion.div>
         </div>
 
-        <div className="creator-card-large" onClick={() => onNavigate('templates')}>
-          <img src="/src/assets/creator-templates.png" alt="Templates" />
-          <div className="creator-card-overlay">
-            <p className="creator-card-title">Templates Premium</p>
-            <p className="creator-card-subtitle">Designs Prontos</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Trending Section */}
-      <h2 className="creator-section-title" style={{ marginTop: '16px' }}>Trending with creators</h2>
-      
-      <div style={{ padding: '0 24px 32px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-          {CREATOR_TOOLS.slice(0, 4).map((tool, i) => {
-            const Icon = tool.Icon;
-            return (
-              <div 
-                key={i} 
-                onClick={() => onNavigate(tool.id)}
-                style={{ 
-                  background: '#f8f9fa', 
-                  padding: '16px', 
-                  borderRadius: '16px', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '8px', 
-                  cursor: 'pointer',
-                  border: '1px solid #f0f0f0' 
-                }}
-              >
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.05)' }}>
-                  <Icon size={20} color="#333" />
-                </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#000' }}>{tool.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Projects Section (Minimal) */}
-      <div style={{ padding: '0 24px 100px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#000' }}>Recent Projects</h3>
-          <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#059669', cursor: 'pointer' }}>View all</span>
+        {/* Trending Section */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 24px' }}>
+          <h2 className="creator-section-title vibrant-gradient-text" style={{ padding: 0, margin: 0 }}>Ferramentas Populares</h2>
+          <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7c3aed' }}>Ver Todas</span>
         </div>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {projects.slice(0, 3).map((project, i) => (
-            <div key={i} className="cc-project-item" style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '12px' }}>
-              <div style={{ width: '60px', height: '60px', borderRadius: '12px', background: '#f4f4f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Film size={24} color="#ccc" />
-              </div>
-              <div style={{ flex: 1, marginLeft: '12px' }}>
-                <p style={{ fontWeight: '800', fontSize: '0.9rem' }}>{project.name || 'Untitled Project'}</p>
-                <p style={{ fontSize: '0.75rem', color: '#999' }}>Edited 2 days ago</p>
+        <div style={{ padding: '20px 24px 32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+            {[
+              { label: 'Editor de Foto', color: '#fff', bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', icon: <Image />, glow: 'icon-glow-blue' },
+              { label: 'Remover Fundo', color: '#fff', bg: 'linear-gradient(135deg, #d946ef, #a21caf)', icon: <Eraser />, glow: 'icon-glow-purple' },
+              { label: 'Upscale IA', color: '#fff', bg: 'linear-gradient(135deg, #f59e0b, #d97706)', icon: <ArrowUpCircle />, glow: 'icon-glow-orange' },
+              { label: 'Prompt Maker', color: '#fff', bg: 'linear-gradient(135deg, #10b981, #059669)', icon: <Wand2 />, glow: 'icon-glow-green' },
+            ].map((tool, i) => (
+              <motion.div 
+                key={i} 
+                whileHover={{ scale: 1.02, y: -4 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onNavigate('viral')}
+                className="glass-panel-creator"
+                style={{ 
+                  padding: '24px 20px', 
+                  borderRadius: '28px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '14px', 
+                  cursor: 'pointer',
+                  border: '1px solid rgba(255,255,255,0.6)',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.03)'
+                }}
+              >
+                <div className={tool.glow} style={{ width: '52px', height: '52px', borderRadius: '18px', background: tool.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tool.color, boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
+                  {React.cloneElement(tool.icon, { size: 26 })}
+                </div>
+                <span style={{ fontSize: '0.95rem', fontWeight: '900', color: '#000', letterSpacing: '-0.3px' }}>{tool.label}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Projects Section */}
+        <div style={{ padding: '0 24px 120px' }}>
+          <div className="glass-panel-creator" style={{ padding: '24px', borderRadius: '32px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#000' }}>Projetos Recentes</h3>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f4f4f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Plus size={20} color="#000" />
               </div>
             </div>
-          ))}
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {projects.length === 0 ? (
+                <p style={{ textAlign: 'center', color: '#999', fontSize: '0.9rem', padding: '20px' }}>Você ainda não tem projetos.</p>
+              ) : (
+                projects.slice(0, 3).map((project, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div 
+                      onClick={() => onNavigate('viral')}
+                      style={{ width: '64px', height: '64px', borderRadius: '16px', background: '#f4f4f5', overflow: 'hidden', cursor: 'pointer' }}
+                    >
+                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #10b981, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                        <Film size={24} />
+                      </div>
+                    </div>
+                    <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => onNavigate('viral')}>
+                      <p style={{ fontWeight: '800', fontSize: '1rem', margin: 0 }}>{project.name || 'Projeto Sem Título'}</p>
+                      <p style={{ fontSize: '0.8rem', color: '#666', margin: '4px 0 0' }}>{project.date || 'Recém editado'}</p>
+                    </div>
+                    <motion.button 
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteProject(project.id);
+                        // Force a re-render by hitting the state indirectly via storage listener
+                      }}
+                      style={{ background: '#fff1f2', border: 'none', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f43f5e', cursor: 'pointer' }}
+                    >
+                      <Trash2 size={20} />
+                    </motion.button>
+                    <ChevronRight size={20} color="#ccc" />
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -176,11 +263,10 @@ const CreatorTopBar = ({ currentView }) => {
   const isDashboard = currentView === 'dashboard';
   
   return (
-    <header style={{ 
-      background: '#fff', 
-      borderBottom: '1px solid #f0f0f0', 
+    <header className="glass-panel-creator" style={{ 
+      borderBottom: '1px solid rgba(255,255,255,0.4)', 
       padding: '0 24px', 
-      height: '70px', 
+      height: '74px', 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'space-between', 
@@ -189,16 +275,16 @@ const CreatorTopBar = ({ currentView }) => {
       top: 0,
       zIndex: 100
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, #10b981, #059669)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Sparkles size={18} color="#fff" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="icon-glow-green" style={{ width: '36px', height: '36px', background: 'linear-gradient(135deg, #10b981, #059669)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)' }}>
+          <Sparkles size={20} color="#fff" />
         </div>
-        <span style={{ fontWeight: '900', fontSize: '1.2rem', color: '#000', letterSpacing: '-0.5px' }}>DVS Creator</span>
+        <span className="vibrant-gradient-text" style={{ fontSize: '1.3rem', letterSpacing: '-0.8px' }}>DVS Creator</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         <ModeToggle />
-        <Bell size={22} color="#000" style={{ cursor: 'pointer' }} />
-        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #a8edea, #00c6ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', border: '1px solid #eee' }}>👤</div>
+        <Bell size={22} color="#7c3aed" style={{ cursor: 'pointer' }} />
+        <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', color: '#fff' }}>👤</div>
       </div>
     </header>
   );
@@ -344,7 +430,7 @@ const CreatorLayout = ({ currentView, setCurrentView }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#fff' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#fff', position: 'relative' }}>
       <CreatorTopBar currentView={currentView} />
 
       <main className="cc-main-content" style={{
