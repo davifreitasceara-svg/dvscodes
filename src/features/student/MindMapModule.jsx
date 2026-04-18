@@ -167,16 +167,13 @@ const MindMapModule = () => {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement || !!document.webkitFullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-    };
-  }, []);
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [isFullscreen]);
 
   useEffect(() => {
     if (mapData && !activeTheme) {
@@ -238,19 +235,7 @@ const MindMapModule = () => {
   };
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      if (mapRef.current?.requestFullscreen) {
-        mapRef.current.requestFullscreen();
-      } else if (mapRef.current?.webkitRequestFullscreen) {
-        mapRef.current.webkitRequestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-    }
+    setIsFullscreen(!isFullscreen);
   };
 
   const handleExport = async () => {
@@ -425,17 +410,24 @@ const MindMapModule = () => {
               </div>
             </div>
             {/* Canvas */}
-            <div ref={mapRef} style={{ flex: 1, background: activeTheme?.bg || '#fff', position: 'relative', overflow: 'hidden', minHeight: '380px' }}>
-              {mapData && activeTheme && <MindMapCanvas mapData={mapData} theme={activeTheme} zoom={zoom} />}
+            <div ref={mapRef} style={{ 
+              flex: 1, 
+              background: activeTheme?.bg || '#fff', 
+              position: isFullscreen ? 'fixed' : 'relative', 
+              inset: isFullscreen ? 0 : 'auto',
+              zIndex: isFullscreen ? 9999 : 1,
+              overflow: 'hidden', 
+              minHeight: isFullscreen ? '100vh' : '380px',
+              width: isFullscreen ? '100vw' : '100%',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              {mapData && activeTheme && <MindMapCanvas mapData={mapData} theme={activeTheme} zoom={isFullscreen ? zoom * 1.5 : zoom} />}
               
               {/* Sair Fullscreen Button */}
               {isFullscreen && (
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (document.exitFullscreen) document.exitFullscreen();
-                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                  }}
+                  onClick={toggleFullscreen}
                   style={{
                     position: 'absolute', top: '18px', left: '20px', zIndex: 20,
                     background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: '100px', border: '1px solid rgba(255,255,255,0.2)',
