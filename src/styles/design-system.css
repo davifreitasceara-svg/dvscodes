@@ -651,3 +651,40 @@ body[data-mode="creator"] .cc-nav-item:hover {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
+/* ─── Vibrant Glassmorphism Theme (Creator) ─── */
+.creator-vibrant-ambient {
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.creator-ambient-blob {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.glass-panel-creator {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+}
+
+.vibrant-gradient-text {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+.icon-glow-purple { filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3)); }
+.icon-glow-blue { filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.3)); }
+.icon-glow-green { filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.3)); }
+.icon-glow-orange { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.3)); }
