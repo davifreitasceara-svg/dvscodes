@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, Sparkles, Download, ZoomIn, ZoomOut, RefreshCw, Search, AlertCircle, Globe } from 'lucide-react';
+import { Layers, Sparkles, Download, ZoomIn, ZoomOut, RefreshCw, Search, AlertCircle, Globe, Briefcase, Trash2 } from 'lucide-react';
 import { findTopic, TOPIC_EXAMPLES } from '../../data/knowledgeBase';
 
 // ─── THEME POR CATEGORIA ──────────────────────────────────────────────────────
@@ -141,12 +141,19 @@ const MindMapCanvas = ({ mapData, theme, zoom }) => {
 
 // ─── MAIN MODULE ──────────────────────────────────────────────────────────────
 const MindMapModule = () => {
-  const [topic, setTopic] = useState('');
-  const [mapData, setMapData] = useState(null);
+  const [topic, setTopic] = useState(() => localStorage.getItem('dvs_mindmap_topic') || '');
+  const [mapData, setMapData] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dvs_mindmap_data')) || null; } catch { return null; }
+  });
   const [generating, setGenerating] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [notFound, setNotFound] = useState(false);
-  const [activeTheme, setActiveTheme] = useState(null);
+  const [activeTheme, setActiveTheme] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dvs_mindmap_theme')) || null; } catch { return null; }
+  });
+  const [history, setHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dvs_mindmap_history')) || []; } catch { return []; }
+  });
   const mapRef = useRef(null);
 
   const handleGenerate = (customTopic) => {
@@ -164,15 +171,42 @@ const MindMapModule = () => {
         setGenerating(false);
         return;
       }
-      const theme = getTheme(data.category);
-      setActiveTheme(theme);
-      setMapData({
+      const newMapData = {
         topic: t.charAt(0).toUpperCase() + t.slice(1).trim(),
         branches: data.mindMap.branches,
         category: data.category,
-      });
+      };
+      const theme = getTheme(data.category);
+      setActiveTheme(theme);
+      setMapData(newMapData);
+
+      const newHistoryItem = { id: Date.now(), topic: t, mapData: newMapData, theme: theme };
+      const updatedHistory = [newHistoryItem, ...history.filter(h => h.topic.toLowerCase() !== t.toLowerCase())];
+      setHistory(updatedHistory);
+      
+      localStorage.setItem('dvs_mindmap_history', JSON.stringify(updatedHistory));
+      localStorage.setItem('dvs_mindmap_topic', t);
+      localStorage.setItem('dvs_mindmap_theme', JSON.stringify(theme));
+      localStorage.setItem('dvs_mindmap_data', JSON.stringify(newMapData));
+
       setGenerating(false);
     }, 1500);
+  };
+
+  const loadHistoryItem = (item) => {
+    setTopic(item.topic);
+    setMapData(item.mapData);
+    setActiveTheme(item.theme);
+    setZoom(1);
+    localStorage.setItem('dvs_mindmap_topic', item.topic);
+    localStorage.setItem('dvs_mindmap_theme', JSON.stringify(item.theme));
+    localStorage.setItem('dvs_mindmap_data', JSON.stringify(item.mapData));
+  };
+
+  const deleteHistoryItem = (id) => {
+    const updatedHistory = history.filter(h => h.id !== id);
+    setHistory(updatedHistory);
+    localStorage.setItem('dvs_mindmap_history', JSON.stringify(updatedHistory));
   };
 
   const handleExport = async () => {
@@ -251,6 +285,37 @@ const MindMapModule = () => {
         </motion.div>
       )}
 
+      {/* Histórico Local */}
+      {!generating && !mapData && history.length > 0 && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: '10px' }}>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Briefcase size={16} color="#94a3b8" /> Mapas Mentais Salvos
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '14px' }}>
+            {history.map(item => (
+              <div key={item.id} onClick={() => loadHistoryItem(item)}
+                style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: item.theme?.bg || '#f4f4f5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.theme?.nodeBg || '#666' }}>
+                    <Layers size={20} />
+                  </div>
+                  <div>
+                    <h4 style={{ fontWeight: '800', fontSize: '0.9rem', color: '#1e293b', margin: 0 }}>{item.topic}</h4>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '600' }}>Mapa Mental IA</span>
+                  </div>
+                </div>
+                <button onClick={(e) => { e.stopPropagation(); deleteHistoryItem(item.id); }}
+                  style={{ background: '#fee2e2', color: '#ef4444', border: 'none', padding: '8px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* Generating */}
       <AnimatePresence>
         {generating && (
@@ -311,7 +376,7 @@ const MindMapModule = () => {
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <button onClick={() => { setMapData(null); setTopic(''); setNotFound(false); }}
+            <button onClick={() => { setMapData(null); setTopic(''); setNotFound(false); localStorage.removeItem('dvs_mindmap_data'); }}
               style={{ background: 'none', border: '1px dashed #e2e8f0', color: '#94a3b8', borderRadius: '10px', padding: '7px 18px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '700' }}>
               + Novo mapa
             </button>
