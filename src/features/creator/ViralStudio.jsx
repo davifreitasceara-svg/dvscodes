@@ -1009,6 +1009,18 @@ const ViralStudio = () => {
   const [stage, setStage] = useState('upload');
   const [file, setFile] = useState(null);
 
+  // Mouse tracking for reactive shards
+  const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
+  const mouseY = useSpring(0, { stiffness: 50, damping: 20 });
+  
+  const handleMouseMove = (e) => {
+    const { clientX, clientY } = e;
+    const moveX = (clientX - window.innerWidth / 2) / 35;
+    const moveY = (clientY - window.innerHeight / 2) / 35;
+    mouseX.set(moveX);
+    mouseY.set(moveY);
+  };
+
   const handleFile = useCallback(async (f) => {
     setFile(f);
     setStage('processing');
@@ -1034,24 +1046,35 @@ const ViralStudio = () => {
   }, [file]);
 
   return (
-    <div style={{ maxWidth: '1300px', margin: '0 auto', width: '100%' }}>
-      <AnimatePresence mode="wait">
-        {stage === 'upload' && (
-          <motion.div key="upload" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.97 }}>
-            <UploadZone onFileAccepted={handleFile} />
-          </motion.div>
-        )}
-        {stage === 'processing' && file && (
-          <motion.div key="processing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ProcessingScreen file={file} onComplete={handleComplete} />
-          </motion.div>
-        )}
-        {stage === 'studio' && file && (
-          <motion.div key="studio" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-            <StudioView file={file} onReset={handleReset} onSave={handleSave} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div 
+      onMouseMove={handleMouseMove}
+      className="creator-vibrant-ambient" 
+      style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', padding: '0' }}
+    >
+      {/* Immersive Background Shards */}
+      <motion.div className="glass-shard" style={{ top: '10%', left: '5%', x: mouseX, y: mouseY, opacity: 0.15, rotate: 15, scale: 1.8 }} />
+      <motion.div className="glass-shard" style={{ bottom: '15%', right: '5%', x: mouseX, y: mouseY, opacity: 0.1, rotate: -30, scale: 2.2 }} />
+      <motion.div className="glass-shard" style={{ top: '40%', right: '40%', x: mouseX, y: mouseY, opacity: 0.05, rotate: 45, scale: 0.8 }} />
+      
+      <div style={{ position: 'relative', zIndex: 10, maxWidth: '1400px', margin: '0 auto', width: '100%', padding: '24px' }}>
+        <AnimatePresence mode="wait">
+          {stage === 'upload' && (
+            <motion.div key="upload" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+              <UploadZone onFileAccepted={handleFile} />
+            </motion.div>
+          )}
+          {stage === 'processing' && file && (
+            <motion.div key="processing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ProcessingScreen file={file} onComplete={handleComplete} />
+            </motion.div>
+          )}
+          {stage === 'studio' && file && (
+            <motion.div key="studio" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', damping: 20 }}>
+              <StudioView file={file} onReset={handleReset} onSave={handleSave} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
