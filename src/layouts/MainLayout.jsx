@@ -135,9 +135,9 @@ const CreatorDashboard = ({ onNavigate }) => {
         {/* Hero Section */}
         <h2 className="creator-section-title vibrant-gradient-text">Minha Jornada Criativa</h2>
         
-        <div className="creator-hero-scroll">
+        <div className="creator-hero-scroll" style={{ paddingBottom: '40px' }}>
           <motion.div 
-            whileHover={{ y: -5 }} 
+            whileHover={{ y: -5, scale: 1.02 }} 
             className="creator-card-large glass-panel-creator" 
             onClick={() => onNavigate('viral')}
             style={{ 
@@ -147,17 +147,19 @@ const CreatorDashboard = ({ onNavigate }) => {
               justifyContent: 'center',
               alignItems: 'center',
               padding: '24px',
-              textAlign: 'center'
+              textAlign: 'center',
+              boxShadow: '0 20px 40px rgba(124, 58, 237, 0.2)'
             }}
           >
-             <div style={{ fontSize: '3rem', fontWeight: '900', color: 'rgba(255,255,255,0.2)', position: 'absolute', top: 10, left: 20 }}>VS</div>
-             <Video size={48} color="#fff" style={{ marginBottom: '16px' }} />
-             <p style={{ fontSize: '1.6rem', fontWeight: '900', color: '#fff', margin: 0, lineHeight: 1.1 }}>VIRAL<br/>STUDIO</p>
-             <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginTop: '8px', fontWeight: '700' }}>Criação de Cinema</p>
+             <div style={{ position: 'absolute', top: '20px', right: '20px' }} className="badge-live">Cinema AI</div>
+             <div style={{ fontSize: '3.5rem', fontWeight: '900', color: 'rgba(255,255,255,0.15)', position: 'absolute', top: 10, left: 20 }}>VS</div>
+             <Video size={52} color="#fff" strokeWidth={2.5} style={{ marginBottom: '16px', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))' }} />
+             <p style={{ fontSize: '1.8rem', fontWeight: '900', color: '#fff', margin: 0, lineHeight: 1, letterSpacing: '-1px' }}>VIRAL<br/>STUDIO</p>
+             <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)', marginTop: '12px', fontWeight: '700', letterSpacing: '0.5px' }}>Cinema & Shorts Virais</p>
           </motion.div>
 
           <motion.div 
-            whileHover={{ y: -5 }} 
+            whileHover={{ y: -5, scale: 1.02 }} 
             className="creator-card-large glass-panel-creator" 
             onClick={() => onNavigate('templates')}
             style={{ 
@@ -167,13 +169,15 @@ const CreatorDashboard = ({ onNavigate }) => {
               justifyContent: 'center',
               alignItems: 'center',
               padding: '24px',
-              textAlign: 'center'
+              textAlign: 'center',
+              boxShadow: '0 20px 40px rgba(37, 99, 235, 0.2)'
             }}
           >
-             <div style={{ fontSize: '3rem', fontWeight: '900', color: 'rgba(255,255,255,0.2)', position: 'absolute', top: 10, left: 20 }}>TP</div>
-             <Layout size={48} color="#fff" style={{ marginBottom: '16px' }} />
-             <p style={{ fontSize: '1.6rem', fontWeight: '900', color: '#fff', margin: 0, lineHeight: 1.1 }}>PRO<br/>TEMPLATES</p>
-             <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', marginTop: '8px', fontWeight: '700' }}>Design Pronto</p>
+             <div style={{ position: 'absolute', top: '20px', right: '20px' }} className="badge-live" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff' }}>Editor</div>
+             <div style={{ fontSize: '3.5rem', fontWeight: '900', color: 'rgba(255,255,255,0.15)', position: 'absolute', top: 10, left: 20 }}>TP</div>
+             <Layout size={52} color="#fff" strokeWidth={2.5} style={{ marginBottom: '16px', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))' }} />
+             <p style={{ fontSize: '1.8rem', fontWeight: '900', color: '#fff', margin: 0, lineHeight: 1, letterSpacing: '-1px' }}>PRO<br/>TEMPLATES</p>
+             <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)', marginTop: '12px', fontWeight: '700', letterSpacing: '0.5px' }}>Design que Engaja</p>
           </motion.div>
         </div>
 
@@ -282,10 +286,15 @@ const CreatorTopBar = ({ currentView }) => {
       zIndex: 100
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div className="icon-glow-green" style={{ width: '36px', height: '36px', background: 'linear-gradient(135deg, #10b981, #059669)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)' }}>
-          <Sparkles size={20} color="#fff" />
-        </div>
-        <span className="vibrant-gradient-text" style={{ fontSize: '1.3rem', letterSpacing: '-0.8px' }}>DVS Creator</span>
+        <motion.div 
+          animate={{ rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 5, repeat: Infinity }}
+          className="icon-glow-green" 
+          style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #10b981, #059669)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)' }}
+        >
+          <Sparkles size={22} color="#fff" />
+        </motion.div>
+        <span className="shimmer-text" style={{ fontSize: '1.4rem', fontWeight: '900', letterSpacing: '-1px' }}>DVS Creator</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         <ModeToggle />

@@ -651,40 +651,71 @@ body[data-mode="creator"] .cc-nav-item:hover {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* ─── Vibrant Glassmorphism Theme (Creator) ─── */
+/* ─── Premium Glassmorphism Theme (Creator 2.0) ─── */
 .creator-vibrant-ambient {
-  background: white;
+  background: #fff;
   position: relative;
   overflow: hidden;
 }
 
+.creator-vibrant-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .creator-ambient-blob {
   position: absolute;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+  width: 600px;
+  height: 600px;
   border-radius: 50%;
-  filter: blur(60px);
-  z-index: 1;
+  filter: blur(80px);
+  z-index: 0;
   pointer-events: none;
 }
 
 .glass-panel-creator {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.02),
+    0 12px 32px rgba(0, 0, 0, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
-.vibrant-gradient-text {
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+.shimmer-text {
+  background: linear-gradient(90deg, #1e1b4b, #7c3aed, #1e1b4b);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 900;
+  animation: shimmer 4s linear infinite;
 }
 
-.icon-glow-purple { filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3)); }
-.icon-glow-blue { filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.3)); }
-.icon-glow-green { filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.3)); }
-.icon-glow-orange { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.3)); }
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
+.badge-live {
+  background: rgba(244, 63, 94, 0.1);
+  color: #f43f5e;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid rgba(244, 63, 94, 0.2);
+}
+
+.icon-glow-purple { filter: drop-shadow(0 0 12px rgba(124, 58, 237, 0.4)); }
+.icon-glow-blue { filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.4)); }
+.icon-glow-green { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4)); }
+.icon-glow-orange { filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.4)); }
