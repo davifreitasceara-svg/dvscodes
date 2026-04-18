@@ -1,0 +1,345 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+:root {
+  /* Common Palette */
+  --bg-dark: #020617;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  
+  /* Student Mode Palette (Blue/Cyan) */
+  --student-primary: #0ea5e9;
+  --student-secondary: #06b6d4;
+  --student-accent: #22d3ee;
+  --student-glow: rgba(14, 165, 233, 0.3);
+
+  /* Creator Mode Palette (Violet/Fuchsia/Gold) */
+  --creator-primary: #8b5cf6;
+  --creator-secondary: #d946ef;
+  --creator-accent: #f59e0b;
+  --creator-glow: rgba(139, 92, 246, 0.3);
+  --creator-viral-gold: #fbbf24;
+  --creator-deep-violet: #4c1d95;
+  --creator-gradient: linear-gradient(135deg, #8b5cf6 0%, #d946ef 50%, #f59e0b 100%);
+  --creator-gradient-subtle: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(217,70,239,0.15) 100%);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-blur: blur(12px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  /* Spacing & Radii */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+.glow-effect {
+  position: absolute;
+  filter: blur(80px);
+  z-index: -1;
+  border-radius: 50%;
+  animation: pulse-glow 4s infinite alternate;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 1s linear infinite; }
+
+@keyframes ai-scan {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.ai-scanning {
+  background: linear-gradient(90deg, transparent 25%, rgba(139,92,246,0.4) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: ai-scan 1.5s infinite;
+}
+
+@keyframes viral-glow-up {
+  0% { box-shadow: 0 0 0 rgba(251,191,36,0); }
+  50% { box-shadow: 0 0 60px rgba(251,191,36,0.6), 0 0 120px rgba(217,70,239,0.4); }
+  100% { box-shadow: 0 0 20px rgba(251,191,36,0.3); }
+}
+.viral-glow-up {
+  animation: viral-glow-up 1.5s ease-out forwards;
+}
+
+@keyframes rhythm-pulse {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes progress-shine {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.float-up { animation: float-up 0.4s ease-out forwards; }
+
+@keyframes score-fill {
+  from { stroke-dashoffset: 283; }
+  to { stroke-dashoffset: var(--target-offset); }
+}
+
+/* ─── CAPCUT LIGHT THEME — only when mode is creator ─── */
+body[data-mode="creator"] {
+  background: #f2f2f2;
+  color: #111;
+}
+
+body[data-mode="creator"] .layout-container {
+  background: #f2f2f2;
+}
+
+/* Creator sidebar */
+body[data-mode="creator"] .cc-sidebar {
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  border-radius: 0;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+}
+
+/* Creator glass cards become white cards */
+body[data-mode="creator"] .glass-card {
+  background: #fff;
+  border: 1px solid #ebebeb;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  backdrop-filter: none;
+}
+
+/* Creator sidebar nav item active */
+body[data-mode="creator"] .cc-nav-item-active {
+  background: #f0eeff !important;
+  color: #7c3aed !important;
+  border-radius: 10px;
+}
+
+body[data-mode="creator"] .cc-nav-item {
+  color: #666;
+}
+
+body[data-mode="creator"] .cc-nav-item:hover {
+  background: #f7f7f7;
+  border-radius: 10px;
+}
+
+/* Creator tool cards */
+.cc-tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.cc-tool-card:hover {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139,92,246,0.15);
+}
+.cc-tool-card .cc-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #f4f4f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  transition: background 0.18s;
+}
+.cc-tool-card:hover .cc-icon {
+  background: #ede9fe;
+}
+.cc-tool-card .cc-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #222;
+  text-align: center;
+  line-height: 1.3;
+}
+.cc-badge-pro {
+  font-size: 0.55rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #8b5cf6, #d946ef);
+  color: white;
+  letter-spacing: 0.03em;
+}
+.cc-badge-free {
+  font-size: 0.55rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #10b981;
+  color: white;
+}
+
+/* New Project Banner */
+.cc-new-project-banner {
+  width: 100%;
+  min-height: 100px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #a8edea 0%, #5de0e6 40%, #00c6ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 198, 255, 0.3);
+}
+.cc-new-project-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 198, 255, 0.4);
+}
+.cc-new-project-text {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+.cc-new-project-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #1a1a2e;
+}
+
+/* Project list item */
+.cc-project-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cc-project-item:hover {
+  background: #f7f5ff;
+}
+.cc-project-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #e8e8e8;
+  flex-shrink: 0;
+}
+
+/* Mobile Menu Button */
+.cc-mobile-menu-btn {
+  display: none !important;
+}
+
+/* ========================================= */
+/* RESPONSIVIDADE MOBILE (CRIADOR)           */
+/* ========================================= */
+@media (max-width: 800px) {
+  .cc-mobile-menu-btn {
+    display: flex !important;
+  }
+  
+  /* Sidebar as Drawer Layer */
+  .cc-sidebar {
+    position: fixed !important;
+    left: 0;
+    top: 56px;
+    bottom: 0;
+    height: calc(100vh - 56px) !important;
+    z-index: 999 !important;
+    background: #fff;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 16px rgba(0,0,0,0.1);
+  }
+  
+  .cc-sidebar.open {
+    transform: translateX(0);
+  }
+
+  
+  /* Ajustar grid de ferramentas da Home do Criador */
+  .cc-tools-grid {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)) !important;
+    gap: 8px !important;
+  }
+  
+  /* Retirar padding enorme da main content */
+  .cc-main-content {
+    padding: 16px !important;
+  }
+  
+  /* Transformar as 2 colunas do Viral Studio em 1 coluna vertical empilhada */
+  .viral-studio-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
