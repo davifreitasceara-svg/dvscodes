@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import {
   Upload, Sparkles, Music2, FileText, Zap, Download,
   CheckCircle2, RotateCcw, TrendingUp, Share2, Copy,
   RefreshCw, Layers, Sun, Award, Sliders, ArrowUpCircle,
-  ImagePlus, Scissors, Play, Pause, SkipForward
+  ImagePlus, Scissors, Play, Pause, SkipForward, X
 } from 'lucide-react';
 
 // ─────────────── CONSTANTS ───────────────
@@ -225,30 +225,43 @@ const ViralScore = ({ score }) => {
   const r = 38;
   const circ = 2 * Math.PI * r;
   const offset = circ - (score / 100) * circ;
-  const color = score >= 85 ? '#f59e0b' : score >= 65 ? '#8b5cf6' : '#64748b';
-  const label = score >= 85 ? 'Viral Ready' : score >= 65 ? 'Alto Potencial' : 'Otimizando...';
+  
+  // Dynamic Aura Color
+  const color = score >= 90 ? '#f59e0b' : score >= 75 ? '#7c3aed' : '#3b82f6';
+  const glowClass = score >= 90 ? 'icon-glow-orange' : score >= 75 ? 'icon-glow-purple' : 'icon-glow-blue';
+  const label = score >= 90 ? 'ALTO IMPACTO' : score >= 70 ? 'VIRAL READY' : 'OTIMIZANDO';
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-      <div style={{ position: 'relative', width: '90px', height: '90px', flexShrink: 0 }}>
-        <svg width="90" height="90" style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx="45" cy="45" r={r} fill="none" stroke="#f1f5f9" strokeWidth="7" />
-          <circle cx="45" cy="45" r={r} fill="none" stroke={color} strokeWidth="7"
+    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div style={{ position: 'relative', width: '100px', height: '100px', flexShrink: 0 }}>
+        {/* Pulsing Aura */}
+        <motion.div 
+          animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          style={{ 
+            position: 'absolute', inset: '-5px', borderRadius: '50%', 
+            background: color, filter: 'blur(15px)', zIndex: 0 
+          }}
+        />
+        
+        <svg width="100" height="100" style={{ transform: 'rotate(-90deg)', position: 'relative', zIndex: 1 }}>
+          <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="8" />
+          <circle cx="50" cy="50" r={r} fill="none" stroke={color} strokeWidth="8"
             strokeDasharray={circ} strokeDashoffset={offset}
             strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1.3s ease, stroke 0.4s' }} />
         </svg>
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: '1.1rem', fontWeight: '900', color, lineHeight: 1 }}>{score}%</span>
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+          <span className="shimmer-text" style={{ fontSize: '1.4rem', fontWeight: '900', color: '#111', lineHeight: 1 }}>{score}%</span>
         </div>
       </div>
       <div>
-        <p style={{ fontWeight: '800', fontSize: '0.9rem', color: '#111', marginBottom: '4px' }}>{label}</p>
-        <p style={{ fontSize: '0.72rem', color: '#888', lineHeight: 1.4 }}>
-          {score >= 85
-            ? 'Excelente combinação de copy, estilo e música. Pronto para postar!'
-            : score >= 65
-              ? 'Boa performance esperada. Use "Maximizar" para chegar ao topo.'
-              : 'Ajuste o estilo e a legenda para aumentar o potencial viral.'}
+        <p style={{ fontWeight: '900', fontSize: '1rem', color: '#111', marginBottom: '4px', letterSpacing: '-0.3px' }}>{label}</p>
+        <p style={{ fontSize: '0.8rem', color: '#666', fontWeight: '600', lineHeight: 1.4 }}>
+          {score >= 90
+            ? 'Conteúdo impecável. A probabilidade de viralização orgânica é máxima.'
+            : score >= 70
+              ? 'Ótimo potencial. Combine com uma música "Hot" para explodir.'
+              : 'Estamos refinando os metadados para aumentar o alcance.'}
         </p>
       </div>
     </div>
@@ -269,79 +282,89 @@ const UploadZone = ({ onFileAccepted }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px', padding: '12px 0 32px', minHeight: '75vh', justifyContent: 'center' }}
+      initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', padding: '40px 0', minHeight: '80vh', justifyContent: 'center' }}
     >
       <div style={{ textAlign: 'center' }}>
-        <div style={{
-          width: '72px', height: '72px', borderRadius: '20px',
-          background: 'linear-gradient(135deg, #8b5cf6, #d946ef)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 20px',
-          boxShadow: '0 8px 32px rgba(139,92,246,0.35)',
-        }}>
-          <Scissors size={32} color="white" />
-        </div>
-        <h2 style={{ fontSize: '1.8rem', fontWeight: '900', color: '#111', marginBottom: '8px' }}>
+        <motion.div 
+          animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 6, repeat: Infinity }}
+          className="icon-glow-purple"
+          style={{
+            width: '80px', height: '80px', borderRadius: '24px',
+            background: 'linear-gradient(135deg, #7c3aed, #4c1d95)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 24px',
+            boxShadow: '0 20px 40px rgba(124, 58, 237, 0.4)',
+          }}
+        >
+          <Scissors size={38} color="white" strokeWidth={2.5} />
+        </motion.div>
+        <h2 className="shimmer-text" style={{ fontSize: '2.4rem', fontWeight: '900', marginBottom: '8px', letterSpacing: '-1.5px' }}>
           Viral Studio
         </h2>
-        <p style={{ color: '#888', fontSize: '0.95rem' }}>
-          Envie sua mídia. A IA edita, adiciona música e otimiza para postar.
+        <p style={{ color: '#666', fontSize: '1rem', fontWeight: '600', opacity: 0.8 }}>
+          Envie sua mídia. A IA edita, adiciona música e viraliza seu conteúdo.
         </p>
       </div>
 
-      <div {...getRootProps()} style={{
-        width: '100%', maxWidth: '520px', minHeight: '240px',
-        border: `2px dashed ${isDragActive ? '#8b5cf6' : '#d1d5db'}`,
-        borderRadius: '20px',
-        background: isDragActive ? '#f5f3ff' : '#fafafa',
+      <div {...getRootProps()} className="glass-panel-creator" style={{
+        width: '100%', maxWidth: '580px', minHeight: '280px',
+        border: `2px dashed ${isDragActive ? '#7c3aed' : 'rgba(0,0,0,0.1)'}`,
+        borderRadius: '32px',
+        background: isDragActive ? 'rgba(124, 58, 237, 0.05)' : 'rgba(255,255,255,0.4)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        gap: '16px', cursor: 'pointer', transition: 'all 0.2s',
+        gap: '20px', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        boxShadow: isDragActive ? '0 30px 60px rgba(124, 58, 237, 0.15)' : '0 10px 30px rgba(0,0,0,0.03)',
       }}>
         <input {...getInputProps()} />
-        <div style={{
-          width: '56px', height: '56px', borderRadius: '50%',
-          background: isDragActive ? '#8b5cf6' : '#f4f4f5',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: 'all 0.2s',
-        }}>
-          <Upload size={24} color={isDragActive ? 'white' : '#666'} />
-        </div>
+        <motion.div 
+          animate={isDragActive ? { scale: 1.2, rotate: 180 } : {}}
+          style={{
+            width: '64px', height: '64px', borderRadius: '50%',
+            background: isDragActive ? '#7c3aed' : '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 8px 20px rgba(0,0,0,0.05)',
+          }}
+        >
+          <Upload size={28} color={isDragActive ? 'white' : '#7c3aed'} />
+        </motion.div>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontWeight: '700', color: '#111', fontSize: '0.95rem' }}>
-            {isDragActive ? 'Solte para começar' : 'Arraste ou clique para enviar'}
+          <p style={{ fontWeight: '800', color: '#111', fontSize: '1.1rem', letterSpacing: '-0.3px' }}>
+            {isDragActive ? 'Solte para Iniciar o Scan' : 'Arraste ou clique para enviar'}
           </p>
-          <p style={{ color: '#aaa', fontSize: '0.8rem', marginTop: '4px' }}>
-            JPG, PNG, MP4, MOV — até 200MB
+          <p style={{ color: '#999', fontSize: '0.85rem', marginTop: '6px', fontWeight: '600' }}>
+            MP4, MOV, JPG, PNG — Alta Qualidade
           </p>
         </div>
         <button style={{
-          padding: '10px 24px', borderRadius: '100px',
-          background: 'linear-gradient(135deg, #8b5cf6, #d946ef)',
-          color: 'white', border: 'none', fontWeight: '700',
-          fontSize: '0.85rem', cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(139,92,246,0.4)',
+          padding: '12px 32px', borderRadius: '100px',
+          background: 'linear-gradient(135deg, #7c3aed, #4c1d95)',
+          color: 'white', border: 'none', fontWeight: '800',
+          fontSize: '0.9rem', cursor: 'pointer',
+          boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)',
         }}>
-          Escolher Arquivo
+          Selecionar Arquivo
         </button>
       </div>
 
-      {/* Feature grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', maxWidth: '520px', width: '100%' }}>
+      {/* Modern Feature Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', maxWidth: '580px', width: '100%' }}>
         {[
-          { icon: <Sliders size={16} />, text: 'Edição Automática' },
-          { icon: <Music2 size={16} />, text: 'Música Sincronizada' },
-          { icon: <FileText size={16} />, text: 'Legenda com IA' },
-          { icon: <TrendingUp size={16} />, text: 'Score Viral' },
-          { icon: <ImagePlus size={16} />, text: '6 Estilos Pro' },
-          { icon: <Download size={16} />, text: 'Export em HD' },
+          { icon: <Sliders size={18} />, text: 'Edição Studio' },
+          { icon: <Music2 size={18} />, text: 'Sync Musical' },
+          { icon: <FileText size={18} />, text: 'Legenda IA' },
+          { icon: <TrendingUp size={18} />, text: 'Score Viral' },
+          { icon: <Sparkles size={18} />, text: 'Efeitos Pro' },
+          { icon: <Download size={18} />, text: 'Export 4K' },
         ].map((f, i) => (
-          <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            background: '#fff', borderRadius: '12px', padding: '10px 12px',
-            border: '1px solid #ebebeb', fontSize: '0.78rem', fontWeight: '600', color: '#444',
+          <div key={i} className="glass-panel-creator" style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            borderRadius: '16px', padding: '14px',
+            fontSize: '0.8rem', fontWeight: '800', color: '#333',
+            border: '1px solid rgba(255,255,255,0.6)'
           }}>
-            <span style={{ color: '#8b5cf6', flexShrink: 0 }}>{f.icon}</span>
+            <span style={{ color: '#7c3aed', filter: 'drop-shadow(0 0 5px rgba(124,58,237,0.3))' }}>{f.icon}</span>
             {f.text}
           </div>
         ))}
@@ -358,87 +381,101 @@ const ProcessingScreen = ({ file, onComplete }) => {
   const previewUrl = useRef(URL.createObjectURL(file)).current;
 
   useEffect(() => {
-    const total = 4200;
+    const total = 5000;
     const stepTime = total / AI_STEPS.length;
     let s = 0;
     const si = setInterval(() => { s++; setStep(s); if (s >= AI_STEPS.length) clearInterval(si); }, stepTime);
-    const pi = setInterval(() => setProgress(p => { if (p >= 100) { clearInterval(pi); return 100; } return p + 1.2; }), total / 84);
-    const done = setTimeout(onComplete, total + 500);
+    const pi = setInterval(() => setProgress(p => { if (p >= 100) { clearInterval(pi); return 100; } return p + 0.8; }), total / 125);
+    const done = setTimeout(onComplete, total + 800);
     return () => { clearInterval(si); clearInterval(pi); clearTimeout(done); };
   }, [onComplete]);
 
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px', padding: '40px 0', minHeight: '70vh', justifyContent: 'center' }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', padding: '40px 0', minHeight: '80vh', justifyContent: 'center' }}
     >
-      {/* Preview with scan */}
-      <div style={{ position: 'relative', width: '200px', height: '200px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
+      {/* Immersive Scan Preview */}
+      <div className="glass-panel-creator" style={{ 
+        position: 'relative', width: '280px', height: '380px', borderRadius: '32px', 
+        overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
+        border: '4px solid rgba(255,255,255,0.5)'
+      }}>
         {isVideo
           ? <video src={previewUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted autoPlay loop />
           : <img src={previewUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         }
+        
+        {/* Holographic Scan Line */}
         <motion.div
-          animate={{ top: ['0%', '100%'] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: 'linear' }}
-          style={{ position: 'absolute', left: 0, right: 0, height: '2px', background: 'rgba(139,92,246,0.9)', boxShadow: '0 0 10px rgba(139,92,246,0.8)', top: 0 }}
+          animate={{ top: ['0%', '100%'], opacity: [0.3, 1, 0.3] }}
+          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+          style={{ 
+            position: 'absolute', left: 0, right: 0, height: '60px', 
+            background: 'linear-gradient(to bottom, transparent, rgba(124, 58, 237, 0.4), transparent)', 
+            borderBottom: '2px solid #7c3aed',
+            boxShadow: '0 10px 20px rgba(124, 58, 237, 0.3)',
+            top: 0, zIndex: 10
+          }}
         />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(139,92,246,0.06)' }} />
+        
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(124, 58, 237, 0.1)', mixBlendMode: 'overlay' }} />
       </div>
 
-      {/* Step label */}
+      {/* High-Tech Progress Info */}
       <div style={{ textAlign: 'center' }}>
-        <motion.p key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-          style={{ fontWeight: '800', fontSize: '1.1rem', color: '#111', marginBottom: '6px' }}
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            style={{ fontWeight: '900', fontSize: '1.4rem', color: '#111', marginBottom: '8px', letterSpacing: '-0.5px' }}
+          >
+            {step < AI_STEPS.length ? AI_STEPS[step].label : 'Mídia Sincronizada!'}
+          </motion.p>
+        </AnimatePresence>
+        <motion.p key={`detail-${step}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          style={{ fontSize: '0.9rem', color: '#666', fontWeight: '600' }}
         >
-          {step < AI_STEPS.length ? AI_STEPS[step].label : '✓ Processamento Concluído'}
-        </motion.p>
-        <motion.p key={`d${step}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          style={{ fontSize: '0.82rem', color: '#888' }}
-        >
-          {step < AI_STEPS.length ? AI_STEPS[step].detail : 'Abrindo o estúdio...'}
+          {step < AI_STEPS.length ? AI_STEPS[step].detail : 'Iniciando estúdio criativo...'}
         </motion.p>
       </div>
 
-      {/* Progress bar */}
-      <div style={{ width: '100%', maxWidth: '380px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.75rem', color: '#888' }}>
-          <span style={{ fontWeight: '600' }}>Processando com IA</span>
-          <span style={{ fontWeight: '800', color: '#8b5cf6' }}>{Math.min(100, Math.round(progress))}%</span>
+      {/* Premium Progress Bar */}
+      <div style={{ width: '100%', maxWidth: '420px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.8rem', fontWeight: '800' }}>
+          <span style={{ color: '#666', textTransform: 'uppercase', letterSpacing: '1px' }}>AI Processing</span>
+          <span className="shimmer-text" style={{ fontSize: '1.1rem' }}>{Math.min(100, Math.round(progress))}%</span>
         </div>
-        <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '100px', overflow: 'hidden' }}>
+        <div className="glass-panel-creator" style={{ height: '10px', borderRadius: '100px', padding: '2px', overflow: 'hidden' }}>
           <motion.div animate={{ width: `${progress}%` }} style={{
             height: '100%', borderRadius: '100px',
-            background: 'linear-gradient(90deg, #8b5cf6, #d946ef)',
+            background: 'linear-gradient(90deg, #7c3aed, #d946ef, #2563eb)',
+            boxShadow: '0 0 15px rgba(124, 58, 237, 0.5)'
           }} transition={{ ease: 'linear' }} />
         </div>
       </div>
 
-      {/* Steps dots */}
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '380px' }}>
+      {/* Steps Visualization */}
+      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '450px' }}>
         {AI_STEPS.map((s, i) => {
           const Icon = s.icon;
           const done = i < step;
           const active = i === step;
           return (
-            <motion.div key={i} animate={{ scale: active ? 1.1 : 1 }} style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', width: '52px',
+            <motion.div key={i} animate={{ scale: active ? 1.15 : 1, opacity: active || done ? 1 : 0.4 }} style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', width: '58px',
             }}>
-              <div style={{
-                width: '40px', height: '40px', borderRadius: '12px',
-                background: done ? '#8b5cf6' : active ? '#f5f3ff' : '#f8fafc',
-                border: active ? '2px solid #8b5cf6' : '1px solid #e2e8f0',
+              <div className="glass-panel-creator" style={{
+                width: '44px', height: '44px', borderRadius: '14px',
+                background: done ? '#7c3aed' : active ? '#fff' : 'rgba(255,255,255,0.4)',
+                border: active ? '2px solid #7c3aed' : '1px solid rgba(0,0,0,0.05)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: '0.2s',
+                transition: '0.3s',
+                boxShadow: active ? '0 10px 20px rgba(124, 58, 237, 0.2)' : 'none'
               }}>
                 {done
-                  ? <CheckCircle2 size={18} color="white" />
-                  : <Icon size={16} color={active ? '#8b5cf6' : '#cbd5e1'} />
+                  ? <CheckCircle2 size={20} color="white" />
+                  : <Icon size={18} color={active ? '#7c3aed' : '#94a3b8'} />
                 }
               </div>
-              <span style={{ fontSize: '0.55rem', textAlign: 'center', color: active ? '#8b5cf6' : '#aaa', fontWeight: active ? '700' : '500', lineHeight: 1.3 }}>
-                {s.label.split(' ').slice(0, 2).join(' ')}
-              </span>
             </motion.div>
           );
         })}
@@ -619,198 +656,229 @@ const StudioView = ({ file, onReset, onSave }) => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
       className="viral-studio-grid"
+      style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px', position: 'relative' }}
     >
       {/* ───── LEFT PANEL: VIDEO PREVIEW ───── */}
-      <div className="viral-left-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0 }}>
+      <div className="viral-left-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0 }}>
 
-        {/* Topbar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Topbar: Unified Search & Action */}
+        <div className="glass-panel-creator" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderRadius: '24px' }}>
           <div>
-            <h3 style={{ fontWeight: '800', fontSize: '1.05rem', color: '#111', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}
-              {maxed && <span style={{ fontSize: '0.65rem', background: '#f59e0b', color: '#000', padding: '2px 8px', borderRadius: '100px', fontWeight: '800' }}>VIRAL</span>}
+            <h3 style={{ fontWeight: '900', fontSize: '1.2rem', color: '#111', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Scissors size={20} className="shimmer-text" /> 
+              {file.name.length > 25 ? file.name.substring(0, 25) + '...' : file.name}
             </h3>
-            <p style={{ fontSize: '0.75rem', color: '#aaa', marginTop: '2px' }}>
-              {(file.size / 1024 / 1024).toFixed(1)} MB · {isVideo ? 'Vídeo' : 'Imagem'} · {platform.toUpperCase()}
+            <p style={{ fontSize: '0.8rem', color: '#666', fontWeight: '600', opacity: 0.7 }}>
+              {(file.size / 1024 / 1024).toFixed(1)} MB · {isVideo ? 'Vídeo Studio' : 'Imagem Studio'}
             </p>
           </div>
-          <button onClick={onReset} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', background: 'none', border: '1px solid #e2e8f0', borderRadius: '100px', cursor: 'pointer', fontSize: '0.78rem', fontWeight: '600', color: '#666' }}>
-            <RefreshCw size={13} /> Novo Upload
+          <button onClick={onReset} className="glass-panel-creator" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'rgba(255,255,255,0.4)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '100px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '800', color: '#333' }}>
+            <RotateCcw size={14} /> Novo Projeto
           </button>
         </div>
 
-        {/* Preview */}
-        <div style={{ 
-          borderRadius: '16px', overflow: 'hidden', position: 'relative', background: '#000', 
-          boxShadow: '0 4px 24px rgba(0,0,0,0.1)',
+        {/* Premium Preview Wrapper */}
+        <div className="glass-panel-creator" style={{ 
+          borderRadius: '32px', overflow: 'hidden', position: 'relative', background: '#000', 
+          boxShadow: '0 30px 60px rgba(0,0,0,0.15)',
           aspectRatio: currentPlatformData.ratio.replace(':', '/'),
-          maxHeight: '480px', margin: '0 auto', width: '100%',
+          maxHeight: '520px', width: '100%',
+          border: '4px solid rgba(255,255,255,0.6)',
           display: 'flex', justifyContent: 'center', alignItems: 'center'
         }}>
           {isVideo
-            ? <video src={previewUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: finalFilter, transition: 'filter 0.5s' }} />
-            : <img src={previewUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: finalFilter, transition: 'filter 0.5s ease' }} />
+            ? <video src={previewUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: finalFilter, transition: 'filter 0.6s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+            : <img src={previewUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: finalFilter, transition: 'filter 0.6s cubic-bezier(0.4, 0, 0.2, 1)' }} />
           }
 
-          {/* caption overlay */}
+          {/* Immersive Overlay: Caption & Badges */}
           <div style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0,
-            background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)',
-            padding: '32px 16px 16px',
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%)',
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            padding: '32px',
           }}>
-            <p style={{ fontWeight: '800', fontSize: '0.9rem', color: 'white', lineHeight: 1.35, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-              {hook}
-            </p>
-            <div style={{ marginTop: '8px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              {hashtags.split(' ').slice(0, 4).map(h => (
-                <span key={h} style={{ fontSize: '0.68rem', background: 'rgba(139,92,246,0.8)', padding: '2px 7px', borderRadius: '100px', fontWeight: '700', color: 'white' }}>{h}</span>
-              ))}
-            </div>
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+              <p style={{ fontWeight: '900', fontSize: '1.2rem', color: 'white', lineHeight: 1.3, marginBottom: '12px', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                {hook}
+              </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {hashtags.split(' ').slice(0, 5).map(h => (
+                  <span key={h} className="shimmer-text" style={{ fontSize: '0.75rem', background: 'rgba(124, 58, 237, 0.3)', backdropFilter: 'blur(5px)', border: '1px solid rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '100px', fontWeight: '800', color: 'white' }}>{h}</span>
+                ))}
+              </div>
+            </motion.div>
           </div>
 
-          {/* Music badge */}
+          {/* Music Status */}
           {musicPlaying && currentMusic && (
-            <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)', borderRadius: '100px', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <RhythmBars active color="white" />
-              <span style={{ fontSize: '0.72rem', color: 'white', fontWeight: '600' }}>{currentMusic.name}</span>
-            </div>
-          )}
-
-          {/* Viral badge */}
-          {maxed && (
-            <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ position: 'absolute', top: '12px', right: '12px', background: '#f59e0b', color: '#000', fontSize: '0.68rem', fontWeight: '900', padding: '4px 10px', borderRadius: '100px' }}>
-              🔥 VIRAL READY
-            </motion.span>
-          )}
-        </div>
-
-        {/* Style selector */}
-        <div style={{ background: '#fff', borderRadius: '14px', padding: '16px', border: '1px solid #ebebeb' }}>
-          <p style={{ fontSize: '0.72rem', fontWeight: '700', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>Estilo Visual</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-            {STYLES.map(s => (
-              <button key={s.id} onClick={() => handleStyleChange(s.id)} style={{
-                padding: '10px', borderRadius: '10px', border: `1.5px solid ${style === s.id ? '#8b5cf6' : '#e2e8f0'}`,
-                background: style === s.id ? '#f5f3ff' : '#fafafa',
-                cursor: 'pointer', textAlign: 'left', transition: '0.15s',
-              }}>
-                <div style={{ width: '100%', height: '40px', borderRadius: '6px', background: '#e8e8e8', overflow: 'hidden', marginBottom: '6px' }}>
-                  <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, #dde2ea, #c8cdd8)`, filter: s.filter }} />
-                </div>
-                <p style={{ fontSize: '0.72rem', fontWeight: '700', color: style === s.id ? '#7c3aed' : '#333' }}>{s.label}</p>
-                <p style={{ fontSize: '0.62rem', color: '#aaa', marginTop: '1px' }}>{s.desc}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Platform */}
-        <div style={{ background: '#fff', borderRadius: '14px', padding: '16px', border: '1px solid #ebebeb' }}>
-          <p style={{ fontSize: '0.72rem', fontWeight: '700', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>Formato de Exportação</p>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {PLATFORMS.map(p => (
-              <button key={p.id} onClick={() => setPlatform(p.id)} style={{
-                padding: '8px 14px', borderRadius: '100px', border: 'none', cursor: 'pointer',
-                background: platform === p.id ? '#1a1a1a' : '#f4f4f5',
-                color: platform === p.id ? 'white' : '#555',
-                fontSize: '0.78rem', fontWeight: '700', transition: '0.15s',
-              }}>
-                {p.label} <span style={{ opacity: 0.6, fontSize: '0.65rem' }}>{p.ratio}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Caption */}
-        <div style={{ background: '#fff', borderRadius: '14px', padding: '16px', border: '1px solid #ebebeb' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <p style={{ fontSize: '0.72rem', fontWeight: '700', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Legenda Gerada por IA</p>
-            <button onClick={handleCopy} style={{
-              display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 12px',
-              background: copied ? '#f0fdf4' : '#f8fafc', border: `1px solid ${copied ? '#86efac' : '#e2e8f0'}`,
-              borderRadius: '100px', cursor: 'pointer', fontSize: '0.72rem', fontWeight: '700',
-              color: copied ? '#16a34a' : '#666',
-            }}>
-              {copied ? <CheckCircle2 size={12} /> : <Copy size={12} />}
-              {copied ? 'Copiado!' : 'Copiar tudo'}
-            </button>
-          </div>
-
-          <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '12px', marginBottom: '10px', border: '1px solid #e2e8f0' }}>
-            <p style={{ fontSize: '0.7rem', fontWeight: '700', color: '#8b5cf6', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Hook</p>
-            <input value={hook} onChange={e => setHook(e.target.value)} style={{
-              width: '100%', background: 'transparent', border: 'none', outline: 'none',
-              fontSize: '0.88rem', fontWeight: '700', color: '#111', lineHeight: 1.4,
-            }} />
-          </div>
-
-          <textarea value={caption} onChange={e => setCaption(e.target.value)} placeholder="Legenda completa..." style={{
-            width: '100%', minHeight: '100px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px',
-            padding: '12px', color: '#333', fontSize: '0.82rem', lineHeight: 1.6, resize: 'vertical', outline: 'none', marginBottom: '8px',
-          }} />
-
-          <textarea value={hashtags} onChange={e => setHashtags(e.target.value)} placeholder="#hashtags" style={{
-            width: '100%', minHeight: '48px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px',
-            padding: '10px 12px', color: '#8b5cf6', fontSize: '0.78rem', lineHeight: 1.5, resize: 'vertical', outline: 'none',
-          }} />
-        </div>
-      </div>
-
-      {/* ───── RIGHT PANEL: CONTROLS ───── */}
-      <div className="viral-right-panel" style={{ background: '#fff', border: '1px solid #ebebeb', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '24px' }}>
-
-        {/* Viral Score */}
-        <div style={{ background: '#fff', borderRadius: '16px', padding: '18px', border: '1px solid #ebebeb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <p style={{ fontSize: '0.72rem', fontWeight: '700', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '14px' }}>Score de Viralização</p>
-          <ViralScore score={score} />
-        </div>
-
-        {/* Maximize Button */}
-        <AnimatePresence mode="wait">
-          {!maxed ? (
-            <motion.button key="max" onClick={handleMaximize} disabled={isMaxing}
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-              style={{
-                width: '100%', height: '56px', borderRadius: '14px', border: 'none',
-                background: isMaxing ? '#c4b5fd' : 'linear-gradient(135deg, #8b5cf6, #d946ef)',
-                color: 'white', fontSize: '0.95rem', fontWeight: '800', cursor: isMaxing ? 'wait' : 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                boxShadow: '0 6px 24px rgba(139,92,246,0.4)',
-              }}>
-              {isMaxing ? <><RotateCcw className="animate-spin" size={18} /> Otimizando...</> : <><Zap size={18} /> Maximizar Viral</>}
-            </motion.button>
-          ) : (
-            <motion.div key="maxed" initial={{ scale: 0.9 }} animate={{ scale: 1 }} style={{
-              padding: '14px 18px', borderRadius: '14px',
-              background: 'linear-gradient(135deg, #fef9c3, #fef3c7)', border: '1px solid #fde68a',
-              display: 'flex', alignItems: 'center', gap: '10px',
-            }}>
-              <Award size={22} color="#d97706" />
-              <div>
-                <p style={{ fontWeight: '800', color: '#92400e', fontSize: '0.85rem' }}>Conteúdo Maximizado</p>
-                <p style={{ color: '#b45309', fontSize: '0.72rem' }}>Score: 98% · Pronto para postar</p>
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} style={{ position: 'absolute', top: '16px', left: '16px', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)', borderRadius: '100px', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <RhythmBars active color="#7c3aed" size="sm" />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.65rem', color: '#ccc', fontWeight: '700', textTransform: 'uppercase' }}>Now Syncing</span>
+                <span style={{ fontSize: '0.75rem', color: 'white', fontWeight: '900' }}>{currentMusic.name}</span>
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
+        </div>
 
-        {/* AI Enhancements */}
-        <div style={{ background: '#fff', borderRadius: '16px', padding: '18px', border: '1px solid #ebebeb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <p style={{ fontSize: '0.72rem', fontWeight: '700', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '14px' }}>Melhorias de IA (Processamento)</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {/* Style selection: Journey Grid Style */}
+        <div className="glass-panel-creator" style={{ padding: '24px', borderRadius: '28px' }}>
+          <h2 className="vibrant-gradient-text" style={{ fontSize: '1.1rem', fontWeight: '900', marginBottom: '20px', letterSpacing: '-0.5px' }}>💎 Estilo Editorial IA</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            {STYLES.map(s => (
+              <motion.button 
+                key={s.id} 
+                whileHover={{ y: -5, scale: 1.02 }}
+                onClick={() => handleStyleChange(s.id)} 
+                style={{
+                  padding: '12px', borderRadius: '18px', border: `2px solid ${style === s.id ? '#7c3aed' : 'rgba(0,0,0,0.05)'}`,
+                  background: style === s.id ? 'rgba(124, 58, 237, 0.05)' : 'rgba(255,255,255,0.4)',
+                  cursor: 'pointer', textAlign: 'left', transition: '0.2s',
+                  boxShadow: style === s.id ? '0 10px 20px rgba(124, 58, 237, 0.1)' : 'none'
+                }}
+              >
+                <div style={{ width: '100%', height: '50px', borderRadius: '12px', background: '#000', overflow: 'hidden', marginBottom: '10px' }}>
+                  <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, #7c3aed, #2563eb)`, filter: s.filter, opacity: 0.8 }} />
+                </div>
+                <p style={{ fontSize: '0.8rem', fontWeight: '900', color: '#111' }}>{s.label}</p>
+                <p style={{ fontSize: '0.65rem', color: '#666', fontWeight: '600', marginTop: '2px' }}>{s.desc}</p>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tool Sections: Platform & Export */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '16px' }}>
+          <div className="glass-panel-creator" style={{ padding: '20px', borderRadius: '24px' }}>
+            <p style={{ fontSize: '0.75rem', fontWeight: '900', color: '#666', textTransform: 'uppercase', marginBottom: '16px' }}>📱 Destinos de Publicação</p>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {PLATFORMS.map(p => (
+                <button key={p.id} onClick={() => setPlatform(p.id)} style={{
+                  padding: '10px 18px', borderRadius: '100px', border: 'none', cursor: 'pointer',
+                  background: platform === p.id ? '#7c3aed' : 'rgba(0,0,0,0.05)',
+                  color: platform === p.id ? 'white' : '#111',
+                  fontSize: '0.8rem', fontWeight: '800', transition: '0.2s',
+                }}>
+                  {p.label} <span style={{ opacity: 0.6, fontSize: '0.6rem' }}>{p.ratio}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="glass-panel-creator" style={{ padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <button onClick={handleDownload} disabled={downloading} className="icon-glow-blue" style={{
+              width: '100%', padding: '14px', borderRadius: '16px', border: 'none',
+              background: 'linear-gradient(135deg, #2563eb, #1e40af)',
+              color: 'white', fontWeight: '900', fontSize: '1rem', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+              boxShadow: '0 10px 25px rgba(37, 99, 235, 0.3)'
+            }}>
+              {downloading ? <RotateCcw className="animate-spin" size={20} /> : <><Download size={20} /> Exportar HD</>}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ───── RIGHT PANEL: AI COMMANDS ───── */}
+      <div className="viral-right-panel" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        
+        {/* Viral Intelligence */}
+        <div className="glass-panel-creator" style={{ padding: '24px', borderRadius: '32px' }}>
+          <p style={{ fontSize: '0.75rem', fontWeight: '900', color: '#666', textTransform: 'uppercase', marginBottom: '20px' }}>IA Intelligence</p>
+          <ViralScore score={score} />
+          
+          <div style={{ marginTop: '24px' }}>
+            {!maxed ? (
+              <motion.button onClick={handleMaximize} disabled={isMaxing}
+                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                style={{
+                  width: '100%', padding: '18px', borderRadius: '20px', border: 'none',
+                  background: 'linear-gradient(135deg, #7c3aed, #d946ef)',
+                  color: 'white', fontSize: '1.1rem', fontWeight: '900', cursor: isMaxing ? 'wait' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+                  boxShadow: '0 15px 35px rgba(124, 58, 237, 0.4)',
+                  position: 'relative', overflow: 'hidden'
+                }}
+              >
+                {isMaxing ? <><RotateCcw className="animate-spin" size={22} /> Sincronizando...</> : <><Zap size={22} /> Maximizar Viral</>}
+              </motion.button>
+            ) : (
+              <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} style={{
+                padding: '20px', borderRadius: '20px',
+                background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '2px solid #fdba74',
+                display: 'flex', alignItems: 'center', gap: '14px',
+              }}>
+                <Award size={28} color="#ea580c" />
+                <div>
+                  <p style={{ fontWeight: '900', color: '#9a3412', fontSize: '1rem' }}>Sincronização Elite</p>
+                  <p style={{ color: '#c2410c', fontSize: '0.8rem', fontWeight: '600' }}>Score: 98% · Viral Ready</p>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        {/* AI Caption: Glassy Multi-Row */}
+        <div className="glass-panel-creator" style={{ padding: '24px', borderRadius: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ fontSize: '0.75rem', fontWeight: '900', color: '#666', textTransform: 'uppercase' }}>Copy & Legend</p>
+            <button onClick={handleCopy} style={{
+              background: 'rgba(124, 58, 237, 0.1)', border: 'none',
+              padding: '6px 14px', borderRadius: '100px', cursor: 'pointer',
+              fontSize: '0.75rem', fontWeight: '900', color: '#7c3aed'
+            }}>
+              {copied ? 'Copiado!' : 'Copiar Tudo'}
+            </button>
+          </div>
+
+          <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: '16px', padding: '16px', border: '1px solid rgba(0,0,0,0.05)' }}>
+            <p style={{ fontSize: '0.65rem', fontWeight: '900', color: '#7c3aed', marginBottom: '6px', textTransform: 'uppercase' }}>Hook Viral</p>
+            <input value={hook} onChange={e => setHook(e.target.value)} style={{
+              width: '100%', background: 'transparent', border: 'none', outline: 'none',
+              fontSize: '1rem', fontWeight: '900', color: '#111'
+            }} />
+          </div>
+
+          <textarea value={caption} onChange={e => setCaption(e.target.value)} style={{
+            width: '100%', minHeight: '120px', background: 'rgba(255,255,255,0.4)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '16px',
+            padding: '16px', color: '#333', fontSize: '0.9rem', fontWeight: '600', lineHeight: 1.6, resize: 'none', outline: 'none'
+          }} />
+          
+          <textarea value={hashtags} onChange={e => setHashtags(e.target.value)} style={{
+            width: '100%', minHeight: '60px', background: 'rgba(124, 58, 237, 0.05)', border: '1px solid rgba(124, 58, 237, 0.1)', borderRadius: '16px',
+            padding: '12px', color: '#7c3aed', fontSize: '0.85rem', fontWeight: '800', lineHeight: 1.5, resize: 'none', outline: 'none'
+          }} />
+        </div>
+
+        {/* Enhancements Grid */}
+        <div className="glass-panel-creator" style={{ padding: '24px', borderRadius: '32px' }}>
+          <p style={{ fontSize: '0.75rem', fontWeight: '900', color: '#666', textTransform: 'uppercase', marginBottom: '16px' }}>Melhorias AI Studio</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
             {AI_ENHANCEMENTS.map(enh => {
               const Icon = enh.icon;
               const active = enhancements.includes(enh.id);
-              if (enh.id === 'fps' && !isVideo) return null; // No FPS for images
+              if (enh.id === 'fps' && !isVideo) return null;
               return (
                 <button key={enh.id} onClick={() => toggleEnhancement(enh.id)} style={{
-                  display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px',
-                  background: active ? '#f0fdf4' : '#fafafa', border: `1px solid ${active ? '#86efac' : '#e2e8f0'}`,
-                  borderRadius: '10px', cursor: 'pointer', textAlign: 'left', transition: '0.15s'
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px',
+                  background: active ? 'rgba(34, 197, 94, 0.05)' : 'rgba(255,255,255,0.4)',
+                  border: `2px solid ${active ? '#22c55e' : 'rgba(0,0,0,0.05)'}`,
+                  borderRadius: '16px', cursor: 'pointer', transition: '0.2s'
                 }}>
-                  <div style={{
+                  <Icon size={20} color={active ? '#22c55e' : '#94a3b8'} strokeWidth={2.5} />
+                  <span style={{ fontSize: '0.75rem', fontWeight: '800', color: active ? '#166534' : '#64748b' }}>{enh.label.split(' ')[0]}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
                     width: '32px', height: '32px', borderRadius: '8px',
                     background: active ? '#16a34a' : '#f1f5f9',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
