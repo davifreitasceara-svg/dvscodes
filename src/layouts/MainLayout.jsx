@@ -14,7 +14,8 @@ import {
   ShoppingBag, Wand2, Sliders, Monitor,
   Eraser, ArrowUpCircle, Sparkles,
   Film, MessageSquare, PenTool,
-  Plus, ChevronRight, Settings, Calendar, Disc, Play
+  Plus, ChevronRight, Settings, Calendar, Disc, Play,
+  MapPin, ArrowRight, Heart, Bell
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -67,96 +68,118 @@ const CreatorDashboard = ({ onNavigate }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      style={{ display: 'flex', flexDirection: 'column', background: '#fff', minHeight: '100vh' }}
     >
-      {/* Tool Grid */}
-      <section>
-        <div className="cc-tools-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', marginBottom: '4px' }}>
-          {CREATOR_TOOLS.map((tool, i) => {
+      {/* Search Bar */}
+      <div className="creator-search-container">
+        <div className="creator-search-box">
+          <Search size={20} color="#000" />
+          <input type="text" placeholder="Places to go, things to do, hotels..." />
+        </div>
+      </div>
+
+      {/* Promo Banner */}
+      <div className="creator-promo-banner">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div className="creator-promo-icon">
+            <MapPin size={24} color="#059669" />
+          </div>
+          <div>
+            <p style={{ fontSize: '1rem', fontWeight: '700', color: '#000' }}>Looking for something nearby?</p>
+            <p style={{ fontSize: '0.9rem', color: '#666' }}>Allow location access</p>
+          </div>
+        </div>
+        <ArrowRight size={20} color="#000" />
+      </div>
+
+      {/* Hero Section */}
+      <h2 className="creator-section-title">Plan your next adventure</h2>
+      
+      <div className="creator-hero-scroll">
+        <div className="creator-card-large" onClick={() => onNavigate('viral')}>
+          <img src="/src/assets/creator-viral.png" alt="Viral Studio" />
+          <div className="creator-card-badge">
+            <span className="creator-badge-tag">Viral Studio</span>
+            <span className="creator-badge-tag">AI Powered</span>
+          </div>
+          <div className="creator-card-like">
+            <Heart size={20} color="#000" />
+          </div>
+          <div className="creator-card-overlay">
+            <p className="creator-card-title">Crie Vídeos Virais</p>
+            <p className="creator-card-subtitle">Studio de Cinema IA</p>
+          </div>
+        </div>
+
+        <div className="creator-card-large" onClick={() => onNavigate('templates')}>
+          <img src="/src/assets/creator-templates.png" alt="Templates" />
+          <div className="creator-card-badge">
+            <span className="creator-badge-tag">Templates</span>
+          </div>
+          <div className="creator-card-like">
+            <Heart size={20} color="#000" />
+          </div>
+          <div className="creator-card-overlay">
+            <p className="creator-card-title">Templates Premium</p>
+            <p className="creator-card-subtitle">Designs Prontos</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Trending Section */}
+      <h2 className="creator-section-title" style={{ marginTop: '16px' }}>Trending with creators</h2>
+      
+      <div style={{ padding: '0 24px 32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+          {CREATOR_TOOLS.slice(0, 4).map((tool, i) => {
             const Icon = tool.Icon;
             return (
-              <button key={i} className="cc-tool-card" onClick={() => onNavigate(tool.id)}>
-                <div style={{ position: 'relative' }}>
-                  <div className="cc-icon">
-                    <Icon size={22} color="#1a1a1a" strokeWidth={1.6} />
-                  </div>
-                  {tool.badge && (
-                    <span
-                      className={tool.badge === 'FREE' ? 'cc-badge-free' : 'cc-badge-pro'}
-                      style={{ position: 'absolute', top: -5, right: -5 }}
-                    >
-                      {tool.badge}
-                    </span>
-                  )}
+              <div 
+                key={i} 
+                onClick={() => onNavigate(tool.id)}
+                style={{ 
+                  background: '#f8f9fa', 
+                  padding: '16px', 
+                  borderRadius: '16px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '8px', 
+                  cursor: 'pointer',
+                  border: '1px solid #f0f0f0' 
+                }}
+              >
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.05)' }}>
+                  <Icon size={20} color="#333" />
                 </div>
-                <span className="cc-label">{tool.label}</span>
-              </button>
+                <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#000' }}>{tool.label}</span>
+              </div>
             );
           })}
         </div>
-        <p style={{ textAlign: 'center', fontSize: '0.72rem', color: '#bbb', marginTop: '8px' }}>
-          Pressione e arraste para reordenar
-        </p>
-      </section>
+      </div>
 
-      {/* New Project Banner */}
-      <button className="cc-new-project-banner" onClick={() => onNavigate('viral')}>
-        <div className="cc-new-project-icon" style={{ fontSize: '1.6rem', fontWeight: '800', lineHeight: 1 }}>+</div>
-        <span className="cc-new-project-text">Novo Projeto</span>
-      </button>
-
-      {/* Projects Section */}
-      <section>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#111' }}>
-            Projetos {projects.length > 0 && <span style={{ fontSize: '0.75rem', color: '#aaa', fontWeight: '500' }}>({projects.length})</span>}
-          </h3>
-          <button style={{ background: 'none', border: '1px solid #e0e0e0', borderRadius: '100px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '700', color: '#7c3aed', cursor: 'pointer' }}>
-            ☁️ Space
-          </button>
+      {/* Projects Section (Minimal) */}
+      <div style={{ padding: '0 24px 100px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#000' }}>Recent Projects</h3>
+          <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#059669', cursor: 'pointer' }}>View all</span>
         </div>
-
-        <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #ebebeb', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-          {projects.length === 0 ? (
-            <div style={{ padding: '40px', textAlign: 'center' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#f4f4f5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                <Film size={22} color="#ccc" />
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {projects.slice(0, 3).map((project, i) => (
+            <div key={i} className="cc-project-item" style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '16px', padding: '12px' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '12px', background: '#f4f4f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Film size={24} color="#ccc" />
               </div>
-              <p style={{ color: '#aaa', fontSize: '0.85rem', fontWeight: '600' }}>Nenhum projeto salvo ainda</p>
-              <p style={{ color: '#ccc', fontSize: '0.75rem', marginTop: '4px' }}>Crie seu primeiro projeto no Viral Studio</p>
+              <div style={{ flex: 1, marginLeft: '12px' }}>
+                <p style={{ fontWeight: '800', fontSize: '0.9rem' }}>{project.name || 'Untitled Project'}</p>
+                <p style={{ fontSize: '0.75rem', color: '#999' }}>Edited 2 days ago</p>
+              </div>
             </div>
-          ) : (
-            projects.map((project, i) => (
-              <React.Fragment key={project.id}>
-                <div className="cc-project-item" onClick={() => onNavigate('viral')}>
-                  {project.thumb
-                    ? <img src={project.thumb} alt="thumb" className="cc-project-thumb" />
-                    : <div className="cc-project-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f4f5' }}>
-                        <Film size={20} color="#ccc" />
-                      </div>
-                  }
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontWeight: '700', fontSize: '0.88rem', color: '#111', marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {project.name || project.id}
-                    </p>
-                    <p style={{ fontSize: '0.75rem', color: '#999' }}>{project.date}</p>
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '3px' }}>
-                      <span style={{ fontSize: '0.68rem', color: '#ccc' }}>{project.size}</span>
-                      {project.maxed && <span style={{ fontSize: '0.65rem', background: '#fef9c3', color: '#b45309', padding: '1px 6px', borderRadius: '100px', fontWeight: '700' }}>VIRAL</span>}
-                      {project.score && <span style={{ fontSize: '0.65rem', color: '#8b5cf6', fontWeight: '700' }}>{project.score}% score</span>}
-                    </div>
-                  </div>
-                  <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', padding: '8px', flexShrink: 0 }}>
-                    <MoreHorizontal size={18} />
-                  </button>
-                </div>
-                {i < projects.length - 1 && <div style={{ height: '1px', background: '#f6f6f6', marginLeft: '92px' }} />}
-              </React.Fragment>
-            ))
-          )}
+          ))}
         </div>
-      </section>
+      </div>
     </motion.div>
   );
 };
