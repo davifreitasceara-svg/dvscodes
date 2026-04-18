@@ -389,7 +389,7 @@ const MainLayout = () => {
           <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ display: 'flex', flexDirection: 'column', width: '100%', background: '#fff' }}>
             
             {/* Hero Section V2 (Estilo Klarna) */}
-            <div className="hero-v2" style={{ backgroundImage: `url('/src/assets/hero-v2.png')` }}>
+            <div className="hero-v2" style={{ backgroundImage: "url('/src/assets/hero-v2.png')" }}>
               <div className="hero-v2-overlay" />
               
               <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
