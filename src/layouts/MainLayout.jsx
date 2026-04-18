@@ -468,7 +468,6 @@ const MainLayout = () => {
                   <span style={{ fontWeight: '800', fontSize: '0.9rem' }}>Tutor IA<br/>Pro</span>
                </div>
             </div>
-            </div>
           </motion.div>
         );
       case 'mindmaps':
