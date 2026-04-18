@@ -268,8 +268,27 @@ const SlidesModule = () => {
   const handleExport = async () => {
     if (!slides || !slideRef.current) return;
     try {
-      // Temporarily stash shadows and rounded corners which may glitch in some renderers, but mostly fine.
-      const canvas = await html2canvas(slideRef.current, { scale: 2, useCORS: true, backgroundColor: null });
+      const el = slideRef.current;
+      
+      // Limpa rastros do Framer Motion que bugam o html2canvas no mobile
+      const animatedNodes = el.querySelectorAll('*');
+      animatedNodes.forEach(n => {
+        if (n.style.filter) n.style.filter = 'none';
+      });
+
+      // Captura o chassi em tamanho exato para não cortar pela metade
+      const rect = el.getBoundingClientRect();
+
+      const canvas = await html2canvas(el, { 
+        scale: 3, 
+        useCORS: true, 
+        backgroundColor: null,
+        width: rect.width,
+        height: rect.height,
+        windowWidth: rect.width,
+        windowHeight: rect.height
+      });
+      
       const imgData = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.href = imgData;

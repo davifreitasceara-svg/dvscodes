@@ -178,7 +178,22 @@ const MindMapModule = () => {
   const handleExport = async () => {
     if (!mapData || !mapRef.current) return;
     try {
-      const canvas = await html2canvas(mapRef.current, { scale: 2, useCORS: true, backgroundColor: activeTheme?.bg || '#ffffff' });
+      const el = mapRef.current;
+      const animatedNodes = el.querySelectorAll('*');
+      animatedNodes.forEach(n => {
+        if (n.style.filter) n.style.filter = 'none';
+      });
+
+      const rect = el.getBoundingClientRect();
+      const canvas = await html2canvas(el, { 
+        scale: 3, 
+        useCORS: true, 
+        backgroundColor: activeTheme?.bg || '#ffffff',
+        width: rect.width,
+        height: rect.height,
+        windowWidth: rect.width,
+        windowHeight: rect.height
+      });
       const imgData = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.href = imgData;
